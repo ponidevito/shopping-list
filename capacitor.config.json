@@ -1,0 +1,13 @@
+{
+  "appId": "com.ponidevito.shoppinglist",
+  "appName": "Покупки",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "buildOptions": {
+      "releaseType": "APK"
+    }
+  }
+}
