@@ -1,0 +1,19 @@
+{
+  "name": "Покупки",
+  "short_name": "Покупки",
+  "description": "Офлайн список покупок з корзиною, пошуком і шерингом.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef4f2",
+  "theme_color": "#eef4f2",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

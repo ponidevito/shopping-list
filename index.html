@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="uk">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#eef4f2" />
+  <meta name="description" content="Простий офлайн застосунок для списків покупок." />
+  <title>Покупки</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app-shell" id="app">
+    <header class="topbar" aria-label="Панель керування">
+      <button class="icon-button" id="settingsButton" type="button" aria-label="Налаштування" title="Налаштування">
+        <span aria-hidden="true">&#9881;</span>
+      </button>
+
+      <div class="topbar__search" id="searchWrap">
+        <button class="icon-button" id="searchButton" type="button" aria-label="Пошук" title="Пошук">
+          <span aria-hidden="true"><svg fill="#000000" width="24px" height="24px" viewBox="0 0 32 32"
+              xmlns="http://www.w3.org/2000/svg">
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier">
+                <path
+                  d="M27 24.57l-5.647-5.648a8.895 8.895 0 0 0 1.522-4.984C22.875 9.01 18.867 5 13.938 5 9.01 5 5 9.01 5 13.938c0 4.929 4.01 8.938 8.938 8.938a8.887 8.887 0 0 0 4.984-1.522L24.568 27 27 24.57zm-13.062-4.445a6.194 6.194 0 0 1-6.188-6.188 6.195 6.195 0 0 1 6.188-6.188 6.195 6.195 0 0 1 6.188 6.188 6.195 6.195 0 0 1-6.188 6.188z">
+                </path>
+              </g>
+            </svg></span>
+        </button>
+        <input id="searchInput" type="search" placeholder="Пошук покупок" autocomplete="off" />
+      </div>
+
+      <button class="icon-button" id="shareButton" type="button" aria-label="Поділитись" title="Поділитись">
+        <span aria-hidden="true">
+          <svg fill="" width="20px" height="20px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M27 22c-1.646 0-3.103 0.8-4.013 2.028l-13.168-6.71c0.114-0.421 0.181-0.86 0.181-1.317 0-0.572-0.101-1.119-0.277-1.63l13.242-6.426c0.909 1.244 2.375 2.056 4.035 2.056 2.762 0 5-2.239 5-5s-2.238-5-5-5-5 2.239-5 5c0 0.388 0.049 0.764 0.133 1.127l-13.432 6.518c-0.915-1.009-2.231-1.646-3.7-1.646-2.761 0-5 2.239-5 5s2.239 5 5 5c1.59 0 3.004-0.744 3.92-1.902l13.222 6.739c-0.090 0.374-0.142 0.762-0.142 1.163 0 2.761 2.238 5 5 5s5-2.239 5-5-2.238-5-5-5zM27 2c1.657 0 3 1.343 3 3s-1.343 3-3 3-3-1.343-3-3 1.343-3 3-3zM5 19c-1.657 0-3-1.343-3-3s1.343-3 3-3c1.657 0 3 1.344 3 3s-1.343 3-3 3zM27 30c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"></path> </g></svg>
+        </span>
+      </button>
+      <button class="icon-button" id="backButton" type="button" aria-label="Назад" title="Назад">
+        <span aria-hidden="true">&#8617;</span>
+      </button>
+      <button class="icon-button" id="trashButton" type="button" aria-label="Корзина" title="Корзина">
+        <span aria-hidden="true">&#128465;</span>
+        <span class="badge" id="trashBadge" hidden>0</span>
+      </button>
+    </header>
+
+    <main class="workspace" id="workspace" tabindex="-1"></main>
+
+    <section class="panel" id="settingsPanel" aria-label="Налаштування" hidden>
+      <div class="panel__card">
+        <div class="panel__header">
+          <h2>Налаштування</h2>
+          <button class="icon-button" data-close-panel type="button" aria-label="Закрити">&#215;</button>
+        </div>
+
+        <fieldset class="field-group">
+          <legend>Готові кольори</legend>
+          <div class="theme-grid" id="themeGrid"></div>
+        </fieldset>
+
+        <label class="field">
+          <span>Розмір шрифта</span>
+          <input id="fontSize" type="range" min="15" max="22" step="1" />
+        </label>
+
+        <fieldset class="field-group">
+          <legend>Сортування</legend>
+          <label><input type="radio" name="sortMode" value="date" /> За датою</label>
+          <label><input type="radio" name="sortMode" value="alpha" /> За алфавітом</label>
+        </fieldset>
+      </div>
+    </section>
+
+    <section class="panel" id="trashPanel" aria-label="Корзина" hidden>
+      <div class="panel__card">
+        <div class="panel__header">
+          <h2>Корзина</h2>
+          <button class="icon-button" data-close-panel type="button" aria-label="Закрити">&#215;</button>
+        </div>
+        <div class="trash-list" id="trashList"></div>
+      </div>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <datalist id="quantityOptions">
+    <option value="1 шт"></option>
+    <option value="2 шт"></option>
+    <option value="3 шт"></option>
+    <option value="4 шт"></option>
+    <option value="5 шт"></option>
+    <option value="6 шт"></option>
+    <option value="10 шт"></option>
+    <option value="250 г"></option>
+    <option value="500 г"></option>
+    <option value="1 кг"></option>
+    <option value="2 кг"></option>
+    <option value="0.5 л"></option>
+    <option value="1 л"></option>
+    <option value="2 л"></option>
+    <option value="1 пачка"></option>
+    <option value="1 пляшка"></option>
+  </datalist>
+
+  <script src="google-sync.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
