@@ -112,8 +112,6 @@ const dom = {
   trashPanel: document.querySelector("#trashPanel"),
   trashList: document.querySelector("#trashList"),
   trashBadge: document.querySelector("#trashBadge"),
-  sharePanel: document.querySelector("#sharePanel"),
-  shareList: document.querySelector("#shareList"),
   backButton: document.querySelector("#backButton"),
   shareButton: document.querySelector("#shareButton"),
   searchButton: document.querySelector("#searchButton"),
@@ -146,7 +144,7 @@ function bindEvents() {
     button.addEventListener("click", closePanels);
   });
 
-  [dom.settingsPanel, dom.trashPanel, dom.sharePanel].forEach((panel) => {
+  [dom.settingsPanel, dom.trashPanel].forEach((panel) => {
     panel.addEventListener("click", (event) => {
       if (event.target === panel) closePanels();
     });
@@ -187,7 +185,7 @@ function bindEvents() {
     render();
   });
 
-  dom.shareButton.addEventListener("click", openSharePanel);
+  dom.shareButton.addEventListener("click", copyCurrentList);
 }
 
 function loadState() {
@@ -278,7 +276,7 @@ function renderHome() {
       <div>
         <h1>Списки покупок</h1>
       </div>
-      <button class="primary-action" data-create-note type="button"><span aria-hidden="true">+</span> Додати запис</button>
+      <button class="primary-action" data-create-note type="button"><span aria-hidden="true">+</span> Додати список</button>
     </div>
     <div class="list-grid" id="notesList"></div>
   `;
@@ -322,7 +320,7 @@ function renderNote(note) {
         <input class="note-card__title note-card__title--large" value="${escapeHtml(note.title)}" aria-label="Назва списку" data-active-title />
         <div class="note-card__meta">Створено ${formatDate(note.createdAt)}</div>
       </div>
-      <button class="danger-action" data-delete-note="${note.id}" type="button">Видалити запис</button>
+      <button class="danger-action" data-delete-note="${note.id}" type="button">Видалити список</button>
     </div>
     <div class="items" id="itemsList"></div>
     <div class="bottom-add">
@@ -433,7 +431,7 @@ function addItem(noteId) {
   note.items.push({
     id: crypto.randomUUID(),
     text: "",
-    qty: "1 шт",
+    qty: "",
     createdAt: new Date().toISOString()
   });
   note.updatedAt = new Date().toISOString();
@@ -547,114 +545,18 @@ function getSortedNotes() {
   });
 }
 
-function openSharePanel() {
+async function copyCurrentList() {
   const text = buildShareText();
   if (!text) {
     showToast("Немає що шерити.");
     return;
   }
 
-  renderShareOptions(text);
-  openPanel(dom.sharePanel);
-}
-
-function renderShareOptions(text) {
-  const options = [
-    {
-      id: "system",
-      title: "Системне меню",
-      hint: "Вибрати будь-який застосунок на телефоні",
-      mark: "••",
-      isVisible: Boolean(navigator.share)
-    },
-    {
-      id: "telegram",
-      title: "Telegram",
-      hint: "Відкрити Telegram share",
-      mark: "TG"
-    },
-    {
-      id: "whatsapp",
-      title: "WhatsApp",
-      hint: "Надіслати у чат",
-      mark: "WA"
-    },
-    {
-      id: "facebook",
-      title: "Facebook",
-      hint: "Опублікувати або надіслати",
-      mark: "f"
-    },
-    {
-      id: "twitter",
-      title: "X / Twitter",
-      hint: "Створити пост",
-      mark: "X"
-    },
-    {
-      id: "email",
-      title: "Email",
-      hint: "Відкрити поштовий клієнт",
-      mark: "@"
-    },
-    {
-      id: "copy",
-      title: "Скопіювати",
-      hint: "Покласти список у буфер",
-      mark: "⌘"
-    }
-  ].filter((option) => option.isVisible !== false);
-
-  dom.shareList.innerHTML = "";
-  options.forEach((option) => {
-    const button = document.createElement("button");
-    button.className = "share-option";
-    button.type = "button";
-    button.dataset.shareTarget = option.id;
-    button.innerHTML = `
-      <span class="share-option__mark" aria-hidden="true">${option.mark}</span>
-      <span>
-        <strong>${option.title}</strong>
-        <small>${option.hint}</small>
-      </span>
-    `;
-    button.addEventListener("click", () => handleShareChoice(option.id, text));
-    dom.shareList.append(button);
-  });
-}
-
-async function handleShareChoice(target, text) {
-  const encodedText = encodeURIComponent(text);
-  const urls = {
-    telegram: `https://t.me/share/url?url=&text=${encodedText}`,
-    whatsapp: `https://wa.me/?text=${encodedText}`,
-    facebook: `https://www.facebook.com/sharer/sharer.php?u=&quote=${encodedText}`,
-    twitter: `https://twitter.com/intent/tweet?text=${encodedText}`,
-    email: `mailto:?subject=${encodeURIComponent("Список покупок")}&body=${encodedText}`
-  };
-
   try {
-    if (target === "system" && navigator.share) {
-      await navigator.share({ title: "Список покупок", text });
-      closePanels();
-      return;
-    }
-
-    if (target === "copy") {
-      await copyToClipboard(text);
-      closePanels();
-      showToast("Список скопійовано.");
-      return;
-    }
-
-    if (urls[target]) {
-      window.open(urls[target], "_blank", "noopener,noreferrer");
-      closePanels();
-      return;
-    }
-  } catch {
     await copyToClipboard(text);
-    showToast("Не вдалось відкрити шеринг, список скопійовано.");
+    showToast("Список скопійовано в буфер.");
+  } catch {
+    showToast("Не вдалось скопіювати список.");
   }
 }
 
@@ -700,7 +602,6 @@ function openPanel(panel) {
 function closePanels() {
   dom.settingsPanel.hidden = true;
   dom.trashPanel.hidden = true;
-  dom.sharePanel.hidden = true;
 }
 
 function updateTrashBadge() {
