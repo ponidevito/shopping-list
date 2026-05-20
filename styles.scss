@@ -498,6 +498,56 @@ button {
   gap: 8px;
 }
 
+.share-list {
+  /* Share targets are large enough for thumbs and remain readable in all themes. */
+  display: grid;
+  gap: 10px;
+}
+
+.share-option {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  background: var(--surface-soft);
+  text-align: left;
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--accent);
+    outline: 3px solid color-mix(in srgb, var(--accent-soft) 72%, transparent);
+  }
+
+  strong,
+  small {
+    display: block;
+  }
+
+  small {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+}
+
+.share-option__mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  color: var(--ink);
+  background: var(--accent-soft);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
 .toast {
   /* Toasts confirm offline-first actions without blocking the user's flow. */
   position: fixed;
