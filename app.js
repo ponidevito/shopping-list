@@ -258,6 +258,7 @@ function applySettings() {
 function render() {
   cleanupTrash();
   const note = state.notes.find((entry) => entry.id === state.activeNoteId);
+  dom.shareButton.hidden = !note;
   if (note) {
     renderNote(note);
   } else {
@@ -546,6 +547,7 @@ function getSortedNotes() {
 }
 
 async function copyCurrentList() {
+  if (!state.activeNoteId) return;
   const text = buildShareText();
   if (!text) {
     showToast("Немає що шерити.");
