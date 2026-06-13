@@ -12,7 +12,7 @@ const THEMES = {
     line: "#d8e1de",
     accent: "#11695d",
     accentSoft: "#d9f1ea",
-    danger: "#b33b46"
+    danger: "#b33b46",
   },
   sky: {
     name: "Sky",
@@ -24,7 +24,7 @@ const THEMES = {
     line: "#d7e3f5",
     accent: "#245cc7",
     accentSoft: "#dfeaff",
-    danger: "#b33b46"
+    danger: "#b33b46",
   },
   lavender: {
     name: "Lavender",
@@ -36,7 +36,7 @@ const THEMES = {
     line: "#e1d8f1",
     accent: "#6a45b8",
     accentSoft: "#e8ddff",
-    danger: "#b33b72"
+    danger: "#b33b72",
   },
   peach: {
     name: "Peach",
@@ -48,7 +48,7 @@ const THEMES = {
     line: "#efd9ca",
     accent: "#b6562d",
     accentSoft: "#ffe1d1",
-    danger: "#ad3434"
+    danger: "#ad3434",
   },
   rose: {
     name: "Rose",
@@ -60,7 +60,7 @@ const THEMES = {
     line: "#efd5df",
     accent: "#b33d66",
     accentSoft: "#ffdce8",
-    danger: "#9f2e3b"
+    danger: "#9f2e3b",
   },
   graphite: {
     name: "Graphite",
@@ -72,7 +72,7 @@ const THEMES = {
     line: "#373c49",
     accent: "#70d6b8",
     accentSoft: "#263f3a",
-    danger: "#ff8a93"
+    danger: "#ff8a93",
   },
   cream: {
     name: "Cream",
@@ -84,8 +84,8 @@ const THEMES = {
     line: "#e4d9c4",
     accent: "#6f6236",
     accentSoft: "#eee6ca",
-    danger: "#a8413d"
-  }
+    danger: "#a8413d",
+  },
 };
 
 const defaultState = {
@@ -96,8 +96,8 @@ const defaultState = {
     theme: "calm",
     background: "#eef4f2",
     fontSize: 17,
-    sortMode: "date"
-  }
+    sortMode: "date",
+  },
 };
 
 let state = loadState();
@@ -119,7 +119,7 @@ const dom = {
   searchInput: document.querySelector("#searchInput"),
   themeGrid: document.querySelector("#themeGrid"),
   fontSize: document.querySelector("#fontSize"),
-  toast: document.querySelector("#toast")
+  toast: document.querySelector("#toast"),
 };
 
 init();
@@ -128,13 +128,17 @@ function init() {
   cleanupTrash();
   renderThemeChoices();
   applySettings();
+  history.replaceState({ page: "home" }, "");
+  if (state.activeNoteId) history.pushState({ page: "note" }, "");
   bindEvents();
   render();
   registerServiceWorker();
 }
 
 function bindEvents() {
-  dom.settingsButton.addEventListener("click", () => openPanel(dom.settingsPanel));
+  dom.settingsButton.addEventListener("click", () =>
+    openPanel(dom.settingsPanel),
+  );
   dom.trashButton.addEventListener("click", () => {
     renderTrash();
     openPanel(dom.trashPanel);
@@ -165,14 +169,16 @@ function bindEvents() {
   });
 
   dom.backButton.addEventListener("click", () => {
+    history.back();
+  });
+
+  window.addEventListener("popstate", () => {
     if (state.activeNoteId) {
       pruneEmptyItems(state.activeNoteId);
       state.activeNoteId = null;
       persist();
       render();
-      return;
     }
-    window.history.back();
   });
 
   dom.searchButton.addEventListener("click", () => {
@@ -244,13 +250,20 @@ function applySettings() {
   root.style.setProperty("--danger", theme.danger);
   root.style.setProperty("--font-size", `${state.settings.fontSize}px`);
 
-  document.querySelector("meta[name='theme-color']")?.setAttribute("content", theme.bg);
+  document
+    .querySelector("meta[name='theme-color']")
+    ?.setAttribute("content", theme.bg);
   dom.fontSize.value = state.settings.fontSize;
   dom.themeGrid.querySelectorAll(".theme-choice").forEach((button) => {
-    button.classList.toggle("is-active", button.dataset.theme === state.settings.theme);
+    button.classList.toggle(
+      "is-active",
+      button.dataset.theme === state.settings.theme,
+    );
   });
 
-  const sortRadio = document.querySelector(`input[name='sortMode'][value='${state.settings.sortMode}']`);
+  const sortRadio = document.querySelector(
+    `input[name='sortMode'][value='${state.settings.sortMode}']`,
+  );
   if (sortRadio) sortRadio.checked = true;
   updateTrashBadge();
 }
@@ -270,7 +283,10 @@ function render() {
 function renderHome() {
   const notes = getSortedNotes().filter((note) => {
     if (!searchQuery) return true;
-    return note.title.toLowerCase().includes(searchQuery) || note.items.some((item) => item.text.toLowerCase().includes(searchQuery));
+    return (
+      note.title.toLowerCase().includes(searchQuery) ||
+      note.items.some((item) => item.text.toLowerCase().includes(searchQuery))
+    );
   });
 
   dom.workspace.innerHTML = `
@@ -283,7 +299,9 @@ function renderHome() {
     <div class="list-grid" id="notesList"></div>
   `;
 
-  dom.workspace.querySelector("[data-create-note]").addEventListener("click", createNote);
+  dom.workspace
+    .querySelector("[data-create-note]")
+    .addEventListener("click", createNote);
   const list = dom.workspace.querySelector("#notesList");
 
   if (!notes.length) {
@@ -313,7 +331,9 @@ function renderHome() {
 }
 
 function renderNote(note) {
-  const visibleItems = note.items.filter((item) => item.text.toLowerCase().includes(searchQuery));
+  const visibleItems = note.items.filter((item) =>
+    item.text.toLowerCase().includes(searchQuery),
+  );
 
   dom.workspace.innerHTML = `
     <div class="screen-title">
@@ -331,9 +351,15 @@ function renderNote(note) {
   `;
 
   const titleInput = dom.workspace.querySelector("[data-active-title]");
-  titleInput.addEventListener("change", () => renameNote(note.id, titleInput.value));
-  dom.workspace.querySelector("[data-delete-note]").addEventListener("click", () => deleteNote(note.id));
-  dom.workspace.querySelector("[data-add-item]").addEventListener("click", () => addItem(note.id));
+  titleInput.addEventListener("change", () =>
+    renameNote(note.id, titleInput.value),
+  );
+  dom.workspace
+    .querySelector("[data-delete-note]")
+    .addEventListener("click", () => deleteNote(note.id));
+  dom.workspace
+    .querySelector("[data-add-item]")
+    .addEventListener("click", () => addItem(note.id));
 
   const list = dom.workspace.querySelector("#itemsList");
   if (!visibleItems.length) {
@@ -360,28 +386,37 @@ function bindNoteCards() {
     button.addEventListener("click", () => {
       state.activeNoteId = button.dataset.openNote;
       persist();
+      history.pushState({ page: "note" }, "");
       render();
     });
   });
 
   dom.workspace.querySelectorAll("[data-rename-note]").forEach((input) => {
-    input.addEventListener("change", () => renameNote(input.dataset.renameNote, input.value));
+    input.addEventListener("change", () =>
+      renameNote(input.dataset.renameNote, input.value),
+    );
   });
 }
 
 function bindItems(noteId) {
   dom.workspace.querySelectorAll("[data-item-text]").forEach((input) => {
-    input.addEventListener("input", () => updateItem(noteId, input.dataset.itemText, { text: input.value }));
+    input.addEventListener("input", () =>
+      updateItem(noteId, input.dataset.itemText, { text: input.value }),
+    );
   });
 
   dom.workspace.querySelectorAll("[data-item-qty]").forEach((input) => {
-    input.addEventListener("input", () => updateItem(noteId, input.dataset.itemQty, { qty: input.value }));
+    input.addEventListener("input", () =>
+      updateItem(noteId, input.dataset.itemQty, { qty: input.value }),
+    );
     input.addEventListener("focus", () => input.select());
     input.addEventListener("click", () => input.select());
   });
 
   dom.workspace.querySelectorAll("[data-delete-item]").forEach((button) => {
-    button.addEventListener("click", () => deleteItem(noteId, button.dataset.deleteItem));
+    button.addEventListener("click", () =>
+      deleteItem(noteId, button.dataset.deleteItem),
+    );
   });
 }
 
@@ -392,11 +427,12 @@ function createNote() {
     title: `Покупки ${formatDate(now)}`,
     createdAt: now,
     updatedAt: now,
-    items: []
+    items: [],
   };
   state.notes.push(note);
   state.activeNoteId = note.id;
   persist();
+  history.pushState({ page: "note" }, "");
   render();
 }
 
@@ -413,7 +449,12 @@ function deleteNote(noteId) {
   const index = state.notes.findIndex((entry) => entry.id === noteId);
   if (index === -1) return;
   const [note] = state.notes.splice(index, 1);
-  state.trash.push({ id: crypto.randomUUID(), type: "note", payload: note, deletedAt: new Date().toISOString() });
+  state.trash.push({
+    id: crypto.randomUUID(),
+    type: "note",
+    payload: note,
+    deletedAt: new Date().toISOString(),
+  });
   state.activeNoteId = null;
   persist();
   render();
@@ -425,7 +466,9 @@ function addItem(noteId) {
   if (!note) return;
   const emptyItem = note.items.find((item) => !item.text.trim());
   if (emptyItem) {
-    const input = dom.workspace.querySelector(`[data-item-text="${emptyItem.id}"]`);
+    const input = dom.workspace.querySelector(
+      `[data-item-text="${emptyItem.id}"]`,
+    );
     input?.focus();
     showToast("Спочатку заповніть порожній запис.");
     return;
@@ -434,7 +477,7 @@ function addItem(noteId) {
     id: crypto.randomUUID(),
     text: "",
     qty: "",
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   });
   note.updatedAt = new Date().toISOString();
   persist();
@@ -458,7 +501,14 @@ function deleteItem(noteId, itemId) {
   const index = note.items.findIndex((entry) => entry.id === itemId);
   if (index === -1) return;
   const [item] = note.items.splice(index, 1);
-  state.trash.push({ id: crypto.randomUUID(), type: "item", noteId, noteTitle: note.title, payload: item, deletedAt: new Date().toISOString() });
+  state.trash.push({
+    id: crypto.randomUUID(),
+    type: "item",
+    noteId,
+    noteTitle: note.title,
+    payload: item,
+    deletedAt: new Date().toISOString(),
+  });
   note.updatedAt = new Date().toISOString();
   persist();
   render();
@@ -487,7 +537,10 @@ function renderTrash() {
   dom.trashList.innerHTML = "";
   state.trash.forEach((entry) => {
     const expiresAt = new Date(new Date(entry.deletedAt).getTime() + TRASH_TTL);
-    const title = entry.type === "note" ? entry.payload.title : `${entry.payload.text || "Порожня покупка"} · ${entry.noteTitle}`;
+    const title =
+      entry.type === "note"
+        ? entry.payload.title
+        : `${entry.payload.text || "Порожня покупка"} · ${entry.noteTitle}`;
     const card = document.createElement("article");
     card.className = "trash-entry";
     card.innerHTML = `
@@ -502,11 +555,15 @@ function renderTrash() {
   });
 
   dom.trashList.querySelectorAll("[data-restore]").forEach((button) => {
-    button.addEventListener("click", () => restoreTrashEntry(button.dataset.restore));
+    button.addEventListener("click", () =>
+      restoreTrashEntry(button.dataset.restore),
+    );
   });
 
   dom.trashList.querySelectorAll("[data-remove]").forEach((button) => {
-    button.addEventListener("click", () => removeTrashEntry(button.dataset.remove));
+    button.addEventListener("click", () =>
+      removeTrashEntry(button.dataset.remove),
+    );
   });
 }
 
@@ -536,13 +593,16 @@ function removeTrashEntry(trashId) {
 function cleanupTrash() {
   const now = Date.now();
   const before = state.trash.length;
-  state.trash = state.trash.filter((entry) => now - new Date(entry.deletedAt).getTime() < TRASH_TTL);
+  state.trash = state.trash.filter(
+    (entry) => now - new Date(entry.deletedAt).getTime() < TRASH_TTL,
+  );
   if (before !== state.trash.length) persist();
 }
 
 function getSortedNotes() {
   return [...state.notes].sort((a, b) => {
-    if (state.settings.sortMode === "alpha") return a.title.localeCompare(b.title, "uk");
+    if (state.settings.sortMode === "alpha")
+      return a.title.localeCompare(b.title, "uk");
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 }
@@ -591,10 +651,12 @@ function buildShareText() {
   }
 
   if (!state.notes.length) return "";
-  return getSortedNotes().map((entry) => {
-    const filledItems = entry.items.filter((item) => item.text.trim()).length;
-    return `${entry.title}: ${filledItems} покупок`;
-  }).join("\n");
+  return getSortedNotes()
+    .map((entry) => {
+      const filledItems = entry.items.filter((item) => item.text.trim()).length;
+      return `${entry.title}: ${filledItems} покупок`;
+    })
+    .join("\n");
 }
 
 function openPanel(panel) {
@@ -626,7 +688,7 @@ function formatDate(value) {
     month: "2-digit",
     year: "numeric",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
   }).format(new Date(value));
 }
 
@@ -647,3 +709,26 @@ function registerServiceWorker() {
     });
   });
 }
+window.__onNativeBack = function () {
+  if (!dom.settingsPanel.hidden || !dom.trashPanel.hidden) {
+    closePanels();
+    return true;
+  }
+
+  if (dom.searchWrap.classList.contains("is-open")) {
+    dom.searchWrap.classList.remove("is-open");
+    dom.searchInput.value = "";
+    searchQuery = "";
+    render();
+    return true;
+  }
+
+  if (state.activeNoteId) {
+    pruneEmptyItems(state.activeNoteId);
+    state.activeNoteId = null;
+    persist();
+    render();
+    return true;
+  }
+  return false;
+};
