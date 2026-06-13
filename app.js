@@ -259,6 +259,7 @@ function render() {
   cleanupTrash();
   const note = state.notes.find((entry) => entry.id === state.activeNoteId);
   dom.shareButton.hidden = !note;
+  dom.backButton.hidden = !note;
   if (note) {
     renderNote(note);
   } else {
@@ -345,7 +346,7 @@ function renderNote(note) {
     row.className = "item-row";
     row.innerHTML = `
       <input class="item-row__text" value="${escapeHtml(item.text)}" placeholder="Назва покупки" aria-label="Назва покупки" data-item-text="${item.id}" />
-      <input class="item-row__qty" value="${escapeHtml(item.qty)}" placeholder="К-сть" aria-label="Кількість" data-item-qty="${item.id}" list="quantityOptions" inputmode="decimal" />
+      <input class="item-row__qty" value="${escapeHtml(item.qty)}" placeholder="Кількість" aria-label="Кількість" data-item-qty="${item.id}" list="quantityOptions" inputmode="decimal" />
       <button class="item-row__delete" data-delete-item="${item.id}" type="button" aria-label="Видалити покупку">−</button>
     `;
     list.append(row);

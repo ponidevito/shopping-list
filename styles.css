@@ -71,12 +71,15 @@ button {
 }
 
 .icon-button {
-  /* Icon-only controls keep the header compact and easy to scan. */
   position: relative;
-  display: inline-grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 10px;
   border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
   border-radius: 999px;
   color: var(--ink);
@@ -84,6 +87,13 @@ button {
   box-shadow: var(--shadow-sm);
   line-height: 1;
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.btn-label {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
 }
 .icon-button span[aria-hidden=true] {
   display: flex;
@@ -235,12 +245,17 @@ button {
 .note-card__title {
   width: 100%;
   min-width: 0;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: 10px;
   background: transparent;
   color: var(--ink);
   font-weight: 800;
   letter-spacing: 0;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+.note-card__title:hover:not(:focus) {
+  background: var(--surface-soft);
+  border-color: color-mix(in srgb, var(--line) 88%, transparent);
 }
 @media (max-width: 476px) {
   .note-card__title {
@@ -501,8 +516,12 @@ button {
     padding-inline: 8px;
   }
   .icon-button {
-    width: 38px;
-    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    padding: 5px 8px;
+  }
+  .btn-label {
+    font-size: 9px;
   }
   .screen-title {
     align-items: stretch;
