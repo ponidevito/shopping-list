@@ -120,6 +120,7 @@ const dom = {
   themeGrid: document.querySelector("#themeGrid"),
   fontSize: document.querySelector("#fontSize"),
   toast: document.querySelector("#toast"),
+  floatingAddButton: document.querySelector("#floatingAddButton"),
 };
 
 init();
@@ -192,6 +193,7 @@ function bindEvents() {
   });
 
   dom.shareButton.addEventListener("click", copyCurrentList);
+  dom.floatingAddButton.addEventListener("click", handleFloatingAdd);
 }
 
 function loadState() {
@@ -273,6 +275,11 @@ function render() {
   const note = state.notes.find((entry) => entry.id === state.activeNoteId);
   dom.shareButton.hidden = !note;
   dom.backButton.hidden = !note;
+  dom.floatingAddButton.setAttribute(
+    "aria-label",
+    note ? "Додати запис" : "Додати список",
+  );
+  dom.floatingAddButton.title = note ? "Додати запис" : "Додати список";
   if (note) {
     renderNote(note);
   } else {
@@ -294,14 +301,10 @@ function renderHome() {
       <div>
         <h1>Списки покупок</h1>
       </div>
-      <button class="primary-action" data-create-note type="button"><span aria-hidden="true">+</span> Додати список</button>
     </div>
     <div class="list-grid" id="notesList"></div>
   `;
 
-  dom.workspace
-    .querySelector("[data-create-note]")
-    .addEventListener("click", createNote);
   const list = dom.workspace.querySelector("#notesList");
 
   if (!notes.length) {
@@ -345,9 +348,6 @@ function renderNote(note) {
       <button class="danger-action" data-delete-note="${note.id}" type="button">Видалити список</button>
     </div>
     <div class="items" id="itemsList"></div>
-    <div class="bottom-add">
-      <button class="primary-action" data-add-item type="button"><span aria-hidden="true">+</span> Додати запис</button>
-    </div>
   `;
 
   const titleInput = dom.workspace.querySelector("[data-active-title]");
@@ -357,9 +357,6 @@ function renderNote(note) {
   dom.workspace
     .querySelector("[data-delete-note]")
     .addEventListener("click", () => deleteNote(note.id));
-  dom.workspace
-    .querySelector("[data-add-item]")
-    .addEventListener("click", () => addItem(note.id));
 
   const list = dom.workspace.querySelector("#itemsList");
   if (!visibleItems.length) {
@@ -434,6 +431,15 @@ function createNote() {
   persist();
   history.pushState({ page: "note" }, "");
   render();
+}
+
+function handleFloatingAdd() {
+  if (state.activeNoteId) {
+    addItem(state.activeNoteId);
+    return;
+  }
+
+  createNote();
 }
 
 function renameNote(noteId, title) {

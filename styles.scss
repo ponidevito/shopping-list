@@ -71,7 +71,7 @@ button {
   top: 0;
   z-index: 10;
   display: grid;
-  grid-template-columns: auto 1fr auto auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
   gap: 8px;
   align-items: center;
   min-height: 64px;
@@ -119,6 +119,16 @@ button {
   }
 }
 
+.btn-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .badge {
   position: absolute;
   top: -2px;
@@ -140,9 +150,10 @@ button {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 20px;
+  gap: 8px;
   justify-self: end;
-  width: min(100%, 360px);
+  width: min(100%, 320px);
+  min-width: 0;
 
   input {
     width: 100%;
@@ -354,17 +365,36 @@ button {
   font-weight: 900;
 }
 
-.bottom-add {
-  /* The add button stays reachable after long shopping lists. */
-  position: sticky;
-  bottom: 16px;
-  display: flex;
-  justify-content: center;
-  margin-top: 22px;
-  pointer-events: none;
+.floating-add {
+  position: fixed;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border: 1px solid color-mix(in srgb, var(--accent) 44%, var(--surface));
+  border-radius: 999px;
+  color: #fff;
+  background: var(--accent);
 
-  .primary-action {
-    pointer-events: auto;
+  transition:
+    transform 160ms ease,
+    background 160ms ease;
+
+  span {
+    display: block;
+    margin-top: -3px;
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: color-mix(in srgb, var(--accent) 88%, #000);
+    outline: none;
   }
 }
 
@@ -544,6 +574,13 @@ button {
   .secondary-action,
   .danger-action {
     width: 100%;
+  }
+
+  .floating-add {
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    width: 58px;
+    height: 58px;
   }
 
   .note-card {

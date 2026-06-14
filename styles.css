@@ -60,7 +60,7 @@ button {
   top: 0;
   z-index: 10;
   display: grid;
-  grid-template-columns: auto 1fr auto auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
   gap: 8px;
   align-items: center;
   min-height: 64px;
@@ -71,15 +71,12 @@ button {
 }
 
 .icon-button {
+  /* Icon-only controls keep the header compact and easy to scan. */
   position: relative;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  min-width: 44px;
-  min-height: 44px;
-  padding: 6px 10px;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
   border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
   border-radius: 999px;
   color: var(--ink);
@@ -87,13 +84,6 @@ button {
   box-shadow: var(--shadow-sm);
   line-height: 1;
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
-}
-
-.btn-label {
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
 }
 .icon-button span[aria-hidden=true] {
   display: flex;
@@ -109,6 +99,16 @@ button {
   border-color: var(--accent);
   background: var(--accent-soft);
   outline: none;
+}
+
+.btn-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .badge {
@@ -132,9 +132,10 @@ button {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 20px;
+  gap: 8px;
   justify-self: end;
-  width: min(100%, 360px);
+  width: min(100%, 320px);
+  min-width: 0;
 }
 .topbar__search input {
   width: 100%;
@@ -245,17 +246,12 @@ button {
 .note-card__title {
   width: 100%;
   min-width: 0;
-  border: 1px solid transparent;
+  border: 0;
   border-radius: 10px;
   background: transparent;
   color: var(--ink);
   font-weight: 800;
   letter-spacing: 0;
-  transition: background 140ms ease, border-color 140ms ease;
-}
-.note-card__title:hover:not(:focus) {
-  background: var(--surface-soft);
-  border-color: color-mix(in srgb, var(--line) 88%, transparent);
 }
 @media (max-width: 476px) {
   .note-card__title {
@@ -345,17 +341,31 @@ button {
   font-weight: 900;
 }
 
-.bottom-add {
-  /* The add button stays reachable after long shopping lists. */
-  position: sticky;
-  bottom: 16px;
-  display: flex;
-  justify-content: center;
-  margin-top: 22px;
-  pointer-events: none;
+.floating-add {
+  position: fixed;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border: 1px solid color-mix(in srgb, var(--accent) 44%, var(--surface));
+  border-radius: 999px;
+  color: #fff;
+  background: var(--accent);
+  transition: transform 160ms ease, background 160ms ease;
 }
-.bottom-add .primary-action {
-  pointer-events: auto;
+.floating-add span {
+  display: block;
+  margin-top: -3px;
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1;
+}
+.floating-add:hover, .floating-add:focus-visible {
+  background: color-mix(in srgb, var(--accent) 88%, #000);
+  outline: none;
 }
 
 .panel {
@@ -516,12 +526,8 @@ button {
     padding-inline: 8px;
   }
   .icon-button {
-    min-width: 38px;
-    min-height: 38px;
-    padding: 5px 8px;
-  }
-  .btn-label {
-    font-size: 9px;
+    width: 38px;
+    height: 38px;
   }
   .screen-title {
     align-items: stretch;
@@ -531,6 +537,12 @@ button {
   .secondary-action,
   .danger-action {
     width: 100%;
+  }
+  .floating-add {
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    width: 58px;
+    height: 58px;
   }
   .note-card {
     grid-template-columns: 1fr;
