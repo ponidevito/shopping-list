@@ -64,6 +64,10 @@ button {
     ),
     var(--app-bg);
 }
+.bottom-add {
+  display: flex;
+  margin-top: 20px;
+}
 
 .topbar {
   /* The header uses a glass surface so actions stay readable across all themes. */
@@ -212,6 +216,15 @@ button {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+
+  &--back {
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    &:hover {
+      opacity: 0.7;
+    }
+  }
 }
 
 .primary-action,

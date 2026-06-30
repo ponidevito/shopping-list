@@ -54,6 +54,11 @@ button {
   background: radial-gradient(circle at top left, color-mix(in srgb, var(--accent-soft) 62%, transparent), transparent 30rem), linear-gradient(180deg, color-mix(in srgb, var(--surface) 45%, transparent), transparent 24rem), var(--app-bg);
 }
 
+.bottom-add {
+  display: flex;
+  margin-top: 20px;
+}
+
 .topbar {
   /* The header uses a glass surface so actions stay readable across all themes. */
   position: sticky;
@@ -187,6 +192,14 @@ button {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+.eyebrow--back {
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.eyebrow--back:hover {
+  opacity: 0.7;
 }
 
 .primary-action,
