@@ -333,7 +333,6 @@ button {
 }
 
 .item-row {
-  /* Stable tracks prevent quantity and delete controls from jumping while typing. */
   display: grid;
   grid-template-columns: minmax(110px, 1fr) minmax(68px, 128px) 46px;
   gap: 10px;
@@ -345,8 +344,36 @@ button {
   box-shadow: var(--shadow-sm);
 }
 
+.item-row__cell {
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+.item-row__label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 9px 12px;
+  min-height: 42px;
+  overflow: auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-row__qty-label {
+  overflow: hidden;
+}
+
+.item-row__empty {
+  color: var(--muted);
+  font-style: normal;
+}
+
 .item-row__text,
 .item-row__qty {
+  display: none;
+  width: 100%;
   min-width: 0;
   min-height: 42px;
   border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
@@ -365,8 +392,34 @@ button {
   text-align: center;
 }
 
-.item-row__delete {
+.item-row.is-editing {
+  grid-template-columns: minmax(110px, 1fr) minmax(68px, 128px) 46px 46px;
+  .item-row__label {
+    display: none;
+  }
+  .item-row__text,
+  .item-row__qty {
+    display: block;
+  }
+  .item-row__delete {
+    display: grid;
+  }
+}
+
+.item-row__edit-btn {
   display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  font-size: 1rem;
+}
+
+.item-row__delete {
+  display: none;
   place-items: center;
   width: 42px;
   height: 42px;
@@ -601,18 +654,12 @@ button {
   }
 
   .item-row {
-    grid-template-columns: 1fr 150px 40px;
+    grid-template-columns: 1fr 65px 40px;
     gap: 8px;
     padding: 8px;
   }
 
   .theme-grid {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 476px) {
-  .item-row {
-    grid-template-columns: 1fr 120px 40px;
   }
 }
