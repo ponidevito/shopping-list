@@ -259,10 +259,12 @@ button {
 .note-card__title {
   width: 100%;
   min-width: 0;
+  margin: 0;
   border: 0;
   border-radius: 10px;
   background: transparent;
   color: var(--ink);
+  font-size: inherit;
   font-weight: 800;
   letter-spacing: 0;
 }
@@ -309,7 +311,6 @@ button {
 }
 
 .item-row {
-  /* Stable tracks prevent quantity and delete controls from jumping while typing. */
   display: grid;
   grid-template-columns: minmax(110px, 1fr) minmax(68px, 128px) 46px;
   gap: 10px;
@@ -323,6 +324,7 @@ button {
 
 .item-row__text,
 .item-row__qty {
+  width: 100%;
   min-width: 0;
   min-height: 42px;
   border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
@@ -561,7 +563,7 @@ button {
     grid-template-columns: 1fr;
   }
   .item-row {
-    grid-template-columns: 1fr 150px 40px;
+    grid-template-columns: 1fr 65px 40px;
     gap: 8px;
     padding: 8px;
   }
@@ -569,8 +571,5 @@ button {
     grid-template-columns: 1fr;
   }
 }
-@media (max-width: 476px) {
-  .item-row {
-    grid-template-columns: 1fr 120px 40px;
-  }
-}/*# sourceMappingURL=styles.css.map */
+
+/*# sourceMappingURL=styles.css.map */

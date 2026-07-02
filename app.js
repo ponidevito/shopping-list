@@ -322,7 +322,7 @@ function renderHome() {
     card.className = "note-card";
     card.innerHTML = `
       <div>
-        <input class="note-card__title" value="${escapeHtml(note.title)}" aria-label="Назва списку" data-rename-note="${note.id}" />
+        <h2 class="note-card__title">${escapeHtml(note.title)}</h2>
         <div class="note-card__meta">${formatDate(note.createdAt)} · ${countFilledItems(note)} покупок</div>
       </div>
       <button class="secondary-action" data-open-note="${note.id}" type="button">Відкрити</button>
@@ -386,12 +386,6 @@ function bindNoteCards() {
       history.pushState({ page: "note" }, "");
       render();
     });
-  });
-
-  dom.workspace.querySelectorAll("[data-rename-note]").forEach((input) => {
-    input.addEventListener("change", () =>
-      renameNote(input.dataset.renameNote, input.value),
-    );
   });
 }
 
