@@ -509,19 +509,10 @@ function deleteItem(noteId, itemId) {
   if (!note) return;
   const index = note.items.findIndex((entry) => entry.id === itemId);
   if (index === -1) return;
-  const [item] = note.items.splice(index, 1);
-  state.trash.push({
-    id: crypto.randomUUID(),
-    type: "item",
-    noteId,
-    noteTitle: note.title,
-    payload: item,
-    deletedAt: new Date().toISOString(),
-  });
+  note.items.splice(index, 1);
   note.updatedAt = new Date().toISOString();
   persist();
   render();
-  showToast("Покупку переміщено в корзину на 24 години.");
 }
 
 function pruneEmptyItems(noteId) {
