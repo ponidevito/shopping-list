@@ -388,7 +388,7 @@ function renderNote(note) {
         <span class="item-row__label item-row__qty-label">${escapeHtml(item.qty)}</span>
         <input class="item-row__qty" value="${escapeHtml(item.qty)}" placeholder="Кількість" aria-label="Кількість" data-item-qty="${item.id}" list="quantityOptions" inputmode="decimal" />
       </div>
-      <button class="item-row__edit-btn" data-edit-item="${item.id}" type="button" aria-label="Редагувати покупку">&#9998;</button>
+      <button class="item-row__edit-btn" data-edit-item="${item.id}" type="button" aria-label="Редагувати покупку">&#128393;</button>
       <button class="item-row__delete" data-delete-item="${item.id}" type="button" aria-label="Видалити покупку">−</button>
     `;
     list.append(row);
