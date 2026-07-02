@@ -103,6 +103,7 @@ const defaultState = {
 let state = loadState();
 let searchQuery = "";
 let toastTimer = null;
+let editingItemIds = new Set();
 
 const dom = {
   workspace: document.querySelector("#workspace"),
@@ -177,6 +178,7 @@ function bindEvents() {
     if (state.activeNoteId) {
       pruneEmptyItems(state.activeNoteId);
       state.activeNoteId = null;
+      editingItemIds.clear();
       persist();
       render();
     }
@@ -375,10 +377,18 @@ function renderNote(note) {
 
   visibleItems.forEach((item) => {
     const row = document.createElement("div");
-    row.className = "item-row";
+    row.className = editingItemIds.has(item.id) ? "item-row is-editing" : "item-row";
+    const hasText = Boolean(item.text.trim());
     row.innerHTML = `
-      <input class="item-row__text" value="${escapeHtml(item.text)}" placeholder="Назва покупки" aria-label="Назва покупки" data-item-text="${item.id}" />
-      <input class="item-row__qty" value="${escapeHtml(item.qty)}" placeholder="Кількість" aria-label="Кількість" data-item-qty="${item.id}" list="quantityOptions" inputmode="decimal" />
+      <div class="item-row__cell">
+        <span class="item-row__label${hasText ? "" : " item-row__empty"}">${hasText ? escapeHtml(item.text) : "Без назви"}</span>
+        <input class="item-row__text" value="${escapeHtml(item.text)}" placeholder="Назва покупки" aria-label="Назва покупки" data-item-text="${item.id}" />
+      </div>
+      <div class="item-row__cell">
+        <span class="item-row__label item-row__qty-label">${escapeHtml(item.qty)}</span>
+        <input class="item-row__qty" value="${escapeHtml(item.qty)}" placeholder="Кількість" aria-label="Кількість" data-item-qty="${item.id}" list="quantityOptions" inputmode="decimal" />
+      </div>
+      <button class="item-row__edit-btn" data-edit-item="${item.id}" type="button" aria-label="Редагувати покупку">&#9998;</button>
       <button class="item-row__delete" data-delete-item="${item.id}" type="button" aria-label="Видалити покупку">−</button>
     `;
     list.append(row);
@@ -411,6 +421,12 @@ function bindItems(noteId) {
     );
     input.addEventListener("focus", () => input.select());
     input.addEventListener("click", () => input.select());
+  });
+
+  dom.workspace.querySelectorAll("[data-edit-item]").forEach((button) => {
+    button.addEventListener("click", () =>
+      toggleItemEditing(button.dataset.editItem),
+    );
   });
 
   dom.workspace.querySelectorAll("[data-delete-item]").forEach((button) => {
@@ -475,6 +491,8 @@ function addItem(noteId) {
   if (!note) return;
   const emptyItem = note.items.find((item) => !item.text.trim());
   if (emptyItem) {
+    editingItemIds.add(emptyItem.id);
+    render();
     const input = dom.workspace.querySelector(
       `[data-item-text="${emptyItem.id}"]`,
     );
@@ -482,17 +500,28 @@ function addItem(noteId) {
     showToast("Спочатку заповніть порожній запис.");
     return;
   }
-  note.items.push({
+  const item = {
     id: crypto.randomUUID(),
     text: "",
     qty: "",
     createdAt: new Date().toISOString(),
-  });
+  };
+  note.items.push(item);
   note.updatedAt = new Date().toISOString();
+  editingItemIds.add(item.id);
   persist();
   render();
   const inputs = dom.workspace.querySelectorAll("[data-item-text]");
   inputs[inputs.length - 1]?.focus();
+}
+
+function toggleItemEditing(itemId) {
+  if (editingItemIds.has(itemId)) editingItemIds.delete(itemId);
+  else editingItemIds.add(itemId);
+  render();
+  if (editingItemIds.has(itemId)) {
+    dom.workspace.querySelector(`[data-item-text="${itemId}"]`)?.focus();
+  }
 }
 
 function updateItem(noteId, itemId, patch) {
@@ -510,6 +539,7 @@ function deleteItem(noteId, itemId) {
   const index = note.items.findIndex((entry) => entry.id === itemId);
   if (index === -1) return;
   note.items.splice(index, 1);
+  editingItemIds.delete(itemId);
   note.updatedAt = new Date().toISOString();
   persist();
   render();
@@ -726,6 +756,7 @@ window.__onNativeBack = function () {
   if (state.activeNoteId) {
     pruneEmptyItems(state.activeNoteId);
     state.activeNoteId = null;
+    editingItemIds.clear();
     persist();
     render();
     return true;
