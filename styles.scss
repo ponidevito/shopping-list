@@ -358,9 +358,11 @@ button {
   width: 100%;
   padding: 9px 12px;
   min-height: 42px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
 
 .item-row__qty-label {
