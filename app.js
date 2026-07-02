@@ -341,7 +341,7 @@ function renderNote(note) {
   dom.workspace.innerHTML = `
     <div class="screen-title">
       <div>
-        <p class="eyebrow">Список</p>
+        <p class="eyebrow eyebrow--back" data-go-home role="button" tabindex="0">Список</p>
         <input class="note-card__title note-card__title--large" value="${escapeHtml(note.title)}" aria-label="Назва списку" data-active-title />
         <div class="note-card__meta">Створено ${formatDate(note.createdAt)}</div>
       </div>
@@ -349,6 +349,15 @@ function renderNote(note) {
     </div>
     <div class="items" id="itemsList"></div>
   `;
+
+  const eyebrow = dom.workspace.querySelector("[data-go-home]");
+  eyebrow.addEventListener("click", () => history.back());
+  eyebrow.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      history.back();
+    }
+  });
 
   const titleInput = dom.workspace.querySelector("[data-active-title]");
   titleInput.addEventListener("change", () =>
